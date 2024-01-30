@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum APITypes: String {
+enum APITypes: String, CaseIterable {
     case trend
     case topRated
     case popular

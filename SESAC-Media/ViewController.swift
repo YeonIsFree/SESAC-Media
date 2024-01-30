@@ -23,7 +23,6 @@ class ViewController: UIViewController {
     
     let tvTableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .systemGray
         return tableView
     }()
 
@@ -35,18 +34,18 @@ class ViewController: UIViewController {
         render()
         
         // Trend
-        TMDBAPIManager.shared.fetchData(type: APITypes.trend) { topRatedShowList in
-            self.showData[APITypes.trend.sectionNumber] = topRatedShowList
+        TMDBAPIManager.shared.fetchData(type: APITypes.trend) { showList in
+            self.showData[APITypes.trend.sectionNumber] = showList
         }
         
         // Top Rated
-        TMDBAPIManager.shared.fetchData(type: APITypes.topRated) { topRatedShowList in
-            self.showData[APITypes.topRated.sectionNumber] = topRatedShowList
+        TMDBAPIManager.shared.fetchData(type: APITypes.topRated) { showList in
+            self.showData[APITypes.topRated.sectionNumber] = showList
         }
         
         // Popular
-        TMDBAPIManager.shared.fetchData(type: APITypes.popular) { topRatedShowList in
-            self.showData[APITypes.popular.sectionNumber] = topRatedShowList
+        TMDBAPIManager.shared.fetchData(type: APITypes.popular) { showList in
+            self.showData[APITypes.popular.sectionNumber] = showList
         }
     }
 }
