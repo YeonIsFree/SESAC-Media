@@ -6,29 +6,20 @@
 //
 
 import UIKit
+import Kingfisher
 import SnapKit
 
 class ViewController: UIViewController {
     
-    let dummyData: [[String]] = [
-        ["lasso", "figure.walk", "figure.fall", "figure.run", "figure.core.training"],
-        ["trash", "light.min"],
-        ["paperplane.fill", "person.line.dotted.person", "person.3.sequence"],
-    ]
+    let titleList: [String] = ["Trend", "Top Rated", "Popular"]
+     
+    var showData: [[TvShow]] = [[], [], []] {
+        didSet {
+            tvTableView.reloadData()
+        }
+    }
     
-/*
-     
-     data 구조 : [
-        1) [TV Trend],
-     
-        2) [TV Top Rated],
-     
-        3) [TV Popular]
-     ]
-
-*/
-    
-     // MARK: - UI Properties
+     // MARK: - UI Property
     
     let tvTableView: UITableView = {
         let tableView = UITableView()
@@ -42,6 +33,21 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         configureTableView()
         render()
+        
+        // Trend
+        TMDBAPIManager.shared.fetchData(type: APITypes.trend) { topRatedShowList in
+            self.showData[APITypes.trend.sectionNumber] = topRatedShowList
+        }
+        
+        // Top Rated
+        TMDBAPIManager.shared.fetchData(type: APITypes.topRated) { topRatedShowList in
+            self.showData[APITypes.topRated.sectionNumber] = topRatedShowList
+        }
+        
+        // Popular
+        TMDBAPIManager.shared.fetchData(type: APITypes.popular) { topRatedShowList in
+            self.showData[APITypes.popular.sectionNumber] = topRatedShowList
+        }
     }
 }
 
@@ -49,16 +55,30 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dummyData.count
+        return showData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tvTableView.dequeueReusableCell(withIdentifier: TvTableViewCell.identifier, for: indexPath) as? TvTableViewCell else { return UITableViewCell() }
+        
+        // configure showCollectionView
+        cell.showCollectionView.delegate = self
+        cell.showCollectionView.dataSource = self
+        cell.showCollectionView.register(ShowCollectionViewCell.self, forCellWithReuseIdentifier: ShowCollectionViewCell.identifier)
+        
+        // 테이블 뷰 셀 각각의 title 설정
+        cell.titleLabel.text = titleList[indexPath.row]
+        
+        // 테이블 뷰 셀에 들어있는 컬렉션 뷰에 tag 설정
+        cell.showCollectionView.tag = indexPath.row
+        
+        cell.showCollectionView.reloadData()
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        200
+        240
     }
 }
 
@@ -69,6 +89,28 @@ extension ViewController {
         tvTableView.dataSource = self
         tvTableView.delegate = self
         tvTableView.register(TvTableViewCell.self, forCellReuseIdentifier: TvTableViewCell.identifier)
+    }
+}
+
+ // MARK: - UICollectionView Configuration Methods
+
+extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        let section = collectionView.tag
+        return showData[section].count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShowCollectionViewCell.identifier, for: indexPath) as? ShowCollectionViewCell else { return UICollectionViewCell() }
+        
+        // 각 테이블 뷰에 들어있는 컬렉션 뷰 구성
+        let section = collectionView.tag
+        let item = showData[section][indexPath.row]
+        if let url = URL(string: "https://image.tmdb.org/t/p/w500\(item.poster_path ?? "")") {
+            cell.showImageView.kf.setImage(with: url)
+        } else { print("뭔가 잘못됐다!") }
+        
+        return cell
     }
 }
 
