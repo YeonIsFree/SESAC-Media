@@ -91,7 +91,7 @@ extension ViewController {
     }
 }
 
- // MARK: - UICollectionView Configuration Methods
+ // MARK: - UICollectionView Delegate
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
