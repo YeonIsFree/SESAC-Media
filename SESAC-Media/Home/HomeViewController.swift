@@ -9,7 +9,7 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-class ViewController: UIViewController {
+class HomeViewController: UIViewController {
     
     let titleList: [String] = ["Trend", "Top Rated", "Popular"]
      
@@ -34,17 +34,17 @@ class ViewController: UIViewController {
         render()
         
         // Trend
-        TMDBAPIManager.shared.fetchData(type: APITypes.trend) { showList in
+        TMDBAPIManager.shared.fetchShowData(type: APITypes.trend) { showList in
             self.showData[APITypes.trend.sectionNumber] = showList
         }
         
         // Top Rated
-        TMDBAPIManager.shared.fetchData(type: APITypes.topRated) { showList in
+        TMDBAPIManager.shared.fetchShowData(type: APITypes.topRated) { showList in
             self.showData[APITypes.topRated.sectionNumber] = showList
         }
         
         // Popular
-        TMDBAPIManager.shared.fetchData(type: APITypes.popular) { showList in
+        TMDBAPIManager.shared.fetchShowData(type: APITypes.popular) { showList in
             self.showData[APITypes.popular.sectionNumber] = showList
         }
     }
@@ -52,7 +52,7 @@ class ViewController: UIViewController {
 
  // MARK: - UITableView Delegate
 
-extension ViewController: UITableViewDataSource, UITableViewDelegate {
+extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return showData.count
     }
@@ -83,7 +83,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
 
  // MARK: - UITableView Configuration Method
 
-extension ViewController {
+extension HomeViewController {
     func configureTableView() {
         tvTableView.dataSource = self
         tvTableView.delegate = self
@@ -93,7 +93,7 @@ extension ViewController {
 
  // MARK: - UICollectionView Delegate
 
-extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let section = collectionView.tag
         return showData[section].count
@@ -115,7 +115,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 
  // MARK: - UI Configuration Method
 
-extension ViewController {
+extension HomeViewController {
     func render() {
         view.addSubview(tvTableView)
         tvTableView.snp.makeConstraints { make in
