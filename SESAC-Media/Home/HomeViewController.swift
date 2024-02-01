@@ -13,7 +13,7 @@ class HomeViewController: UIViewController {
     
     let titleList: [String] = ["Trend", "Top Rated", "Popular"]
      
-    var showData: [[TvShow]] = [[], [], []] {
+    var seriesData: [[TVSeries]] = [[], [], []] {
         didSet {
             tvTableView.reloadData()
         }
@@ -34,19 +34,22 @@ class HomeViewController: UIViewController {
         render()
         
         // Trend
-        TMDBAPIManager.shared.fetchShowData(type: APITypes.trend) { showList in
-            self.showData[APITypes.trend.sectionNumber] = showList
+        TMDBAPIManager.shared.fetchSeriesList(api: .trend) { list in
+            self.seriesData[HomeSections.trend.sectionNumber] = list
         }
+//        TMDBAPIManager.shared.fetchShowData(type: APITypes.trend) { showList in
+//            self.showData[APITypes.trend.sectionNumber] = showList
+//        }
         
         // Top Rated
-        TMDBAPIManager.shared.fetchShowData(type: APITypes.topRated) { showList in
-            self.showData[APITypes.topRated.sectionNumber] = showList
-        }
+//        TMDBAPIManager.shared.fetchShowData(type: APITypes.topRated) { showList in
+//            self.showData[APITypes.topRated.sectionNumber] = showList
+//        }
         
         // Popular
-        TMDBAPIManager.shared.fetchShowData(type: APITypes.popular) { showList in
-            self.showData[APITypes.popular.sectionNumber] = showList
-        }
+//        TMDBAPIManager.shared.fetchShowData(type: APITypes.popular) { showList in
+//            self.showData[APITypes.popular.sectionNumber] = showList
+//        }
     }
 }
 
@@ -54,7 +57,7 @@ class HomeViewController: UIViewController {
 
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return showData.count
+        return seriesData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -96,7 +99,7 @@ extension HomeViewController {
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let section = collectionView.tag
-        return showData[section].count
+        return seriesData[section].count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -104,7 +107,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         // 각 테이블 뷰에 들어있는 컬렉션 뷰 구성
         let section = collectionView.tag
-        let item = showData[section][indexPath.row]
+        let item = seriesData[section][indexPath.row]
         if let url = URL(string: "https://image.tmdb.org/t/p/w500\(item.poster_path ?? "")") {
             cell.showImageView.kf.setImage(with: url)
         } else { print("뭔가 잘못됐다!") }

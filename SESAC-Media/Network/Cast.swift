@@ -7,10 +7,3 @@
 
 import Foundation
 
-struct CastModel: Decodable {
-    let cast: [Cast]
-}
-
-struct Cast: Decodable {
-    let name: String
-}

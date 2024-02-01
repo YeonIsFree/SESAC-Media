@@ -15,7 +15,7 @@ class SectionTitleLabel: UILabel {
     }
     
     func configure() {
-        font = .boldSystemFont(ofSize: 22)
+        font = .boldSystemFont(ofSize: 20)
         textColor = .white
     }
     
