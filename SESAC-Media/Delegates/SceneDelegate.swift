@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let _ = (scene as? UIWindowScene) else { return }
         
-        window?.rootViewController = TVShowTableViewController()
+        window?.rootViewController = HomeViewController()
         
         window?.makeKeyAndVisible()
     }

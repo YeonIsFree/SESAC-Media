@@ -13,11 +13,7 @@ class HomeViewController: UIViewController {
     
     let titleList: [String] = ["Trend", "Top Rated", "Popular"]
      
-    var seriesData: [[TVSeries]] = [[], [], []] {
-        didSet {
-            tvTableView.reloadData()
-        }
-    }
+    var seriesData: [[TVSeries]] = [[], [], []]
     
      // MARK: - UI Property
     
@@ -33,23 +29,38 @@ class HomeViewController: UIViewController {
         configureTableView()
         render()
         
+        let group = DispatchGroup()
+        
         // Trend
-        TMDBAPIManager.shared.fetchSeriesList(api: .trend) { list in
-            self.seriesData[HomeSections.trend.sectionNumber] = list
+        group.enter()
+        DispatchQueue.global().async {
+            TMDBAPIManager.shared.fetchData(type: TVSeriesModel.self, api: .trend) { list in
+                self.seriesData[HomeSections.trend.sectionNumber] = list.results
+            }
+            group.leave()
         }
-//        TMDBAPIManager.shared.fetchShowData(type: APITypes.trend) { showList in
-//            self.showData[APITypes.trend.sectionNumber] = showList
-//        }
-        
+
         // Top Rated
-//        TMDBAPIManager.shared.fetchShowData(type: APITypes.topRated) { showList in
-//            self.showData[APITypes.topRated.sectionNumber] = showList
-//        }
-        
+        group.enter()
+        DispatchQueue.global().async {
+            TMDBAPIManager.shared.fetchData(type: TVSeriesModel.self, api: .topRated) { list in
+                self.seriesData[HomeSections.topRated.sectionNumber] = list.results
+            }
+            group.leave()
+        }
+   
         // Popular
-//        TMDBAPIManager.shared.fetchShowData(type: APITypes.popular) { showList in
-//            self.showData[APITypes.popular.sectionNumber] = showList
-//        }
+        group.enter()
+        DispatchQueue.global().async {
+            TMDBAPIManager.shared.fetchData(type: TVSeriesModel.self, api: .popular) { list in
+                self.seriesData[HomeSections.popular.sectionNumber] = list.results
+            }
+            group.leave()
+        }
+        
+        group.notify(queue: .main) {
+            self.tvTableView.reloadData()
+        }
     }
 }
 

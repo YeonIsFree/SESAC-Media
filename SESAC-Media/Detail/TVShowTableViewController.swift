@@ -40,28 +40,28 @@ class TVShowTableViewController: UIViewController {
         // Details
         group.enter()
         DispatchQueue.global().async(group: group) {
-            TMDBAPIManager.shared.fetchSeries(api: .details(id: self.targetSeriesID)) { item in
+            TMDBAPIManager.shared.fetchData(type: TVSeries.self, api: .details(id: self.targetSeriesID)) { item in
                 self.series = item
-                group.leave()
             }
+            group.leave()
         }
         
         // Recommand
         group.enter()
         DispatchQueue.global().async(group: group)  {
-            TMDBAPIManager.shared.fetchSeriesList(api: .recommand(id: self.targetSeriesID)) { list in
-                self.recommandList = list
-                group.leave()
+            TMDBAPIManager.shared.fetchData(type: TVSeriesModel.self, api: .recommand(id: self.targetSeriesID)) { list in
+                self.recommandList = list.results
             }
+            group.leave()
         }
         
         // Cast
         group.enter()
         DispatchQueue.global().async(group: group) {
-            TMDBAPIManager.shared.fetchCast(api: .cast(id: self.targetSeriesID)) { list in
-                self.castList = list
-                group.leave()
+            TMDBAPIManager.shared.fetchData(type: CastModel.self, api: .cast(id: self.targetSeriesID)) { list in
+                self.castList = list.cast
             }
+            group.leave()
         }
         
         group.notify(queue: .main) {
@@ -103,7 +103,7 @@ extension TVShowTableViewController: UITableViewDelegate, UITableViewDataSource 
             
             // 컬렉션 뷰에 현재 indexPath.row로 tag 설정
             cell.collectionView.tag = indexPath.row
-         
+            
             cell.sectionTitleLabel.text = TVShowSections(rawValue: indexPath.row)?.title
             
             cell.collectionView.reloadData()

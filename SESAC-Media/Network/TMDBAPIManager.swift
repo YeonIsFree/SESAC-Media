@@ -15,53 +15,71 @@ import Alamofire
 
 // Cast  --> 캐스팅
 
+// =====
+// T는 [TVSeries] 가 될 수도, TVSeries 가 될 수도!
+// =====
+
 class TMDBAPIManager {
     
     static let shared = TMDBAPIManager()
     
-    // 드라마 리스트
-    func fetchSeriesList(api: TMDBAPI, completionHandler: @escaping ([TVSeries]) -> Void) {
+    func fetchData<T: Decodable>(type: T.Type, api: TMDBAPI, completionHandler: @escaping ((T) -> Void)) {
         AF.request(api.endpoint,
                    method: api.method,
                    headers: api.header)
-        .responseDecodable(of: TVSeriesModel.self) { response in
+        .responseDecodable(of: type) { response in
             switch response.result {
             case .success(let success):
-//                dump(success.results)
-                completionHandler(success.results)
-            case .failure(let failure):
-                print("Network Fail", failure)
-            }
-        }
-    }
-    
-    // 드라마
-    func fetchSeries(api: TMDBAPI, completionHandler: @escaping (TVSeries) -> Void) {
-        AF.request(api.endpoint,
-                   method: api.method,
-                   headers: api.header)
-        .responseDecodable(of: TVSeries.self) { response in
-            switch response.result {
-            case .success(let success):
-//                dump(success)
                 completionHandler(success)
             case .failure(let failure):
                 print("Network Fail", failure)
             }
         }
     }
-    
-    // 캐스트
-    func fetchCast(api: TMDBAPI, completionHandler: @escaping ([Cast]) -> Void) {
-        AF.request(api.endpoint, headers: api.header)
-            .responseDecodable(of: CastModel.self) { response in
-                switch response.result {
-                case .success(let success):
-//                    dump(success.cast)
-                    completionHandler(success.cast)
-                case .failure(let failure):
-                    print("Network Fail", failure)
-                }
-            }
-    }
+//    
+//    // 드라마 리스트
+//    func fetchSeriesList(api: TMDBAPI, completionHandler: @escaping ([TVSeries]) -> Void) {
+//        AF.request(api.endpoint,
+//                   method: api.method,
+//                   headers: api.header)
+//        .responseDecodable(of: TVSeriesModel.self) { response in
+//            switch response.result {
+//            case .success(let success):
+////                dump(success.results)
+//                completionHandler(success.results)
+//            case .failure(let failure):
+//                print("Network Fail", failure)
+//            }
+//        }
+//    }
+//    
+//    // 드라마
+//    func fetchSeries(api: TMDBAPI, completionHandler: @escaping (TVSeries) -> Void) {
+//        AF.request(api.endpoint,
+//                   method: api.method,
+//                   headers: api.header)
+//        .responseDecodable(of: TVSeries.self) { response in
+//            switch response.result {
+//            case .success(let success):
+////                dump(success)
+//                completionHandler(success)
+//            case .failure(let failure):
+//                print("Network Fail", failure)
+//            }
+//        }
+//    }
+//    
+//    // 캐스트
+//    func fetchCast(api: TMDBAPI, completionHandler: @escaping ([Cast]) -> Void) {
+//        AF.request(api.endpoint, headers: api.header)
+//            .responseDecodable(of: CastModel.self) { response in
+//                switch response.result {
+//                case .success(let success):
+////                    dump(success.cast)
+//                    completionHandler(success.cast)
+//                case .failure(let failure):
+//                    print("Network Fail", failure)
+//                }
+//            }
+//    }
 }
